@@ -1,6 +1,6 @@
 ---
 name: diagram-design
-description: Create branded architecture, architecture delta, IT current-state, flowchart, sequence, state machine, ER/data model, timeline, swimlane, quadrant, radar/spider, polar chart (polar/radial lollipop), loop/flywheel, nested, tree, org chart, layer stack, Venn, pyramid/funnel, treemap, heatmap, bar, waterfall, line, Gantt and scatter charts, high-level, process, medallion, data flow, DP integration, DP security matrix, Sankey, fishbone, Wardley map, kanban, user journey, deployment, dependency graph, UML class, story map, or database schema diagrams as standalone HTML/SVG/PNG. Redraw .drawio/.drawio.png/.drawio.svg, Mermaid .mmd, or Excalidraw .excalidraw sources at a chosen size/detail; onboard brand tokens from a website; add lifecycle phase maps, semantic patterns, callouts, accessible motion, or sketchy/hand-drawn styling.
+description: Create branded architecture, architecture delta, IT current-state, flowchart, sequence, state machine, ER/data model, timeline, swimlane, quadrant, radar/spider, polar chart (polar/radial lollipop), loop/flywheel, nested, tree, org chart, layer stack, Venn, pyramid/funnel, treemap, heatmap, bar, waterfall, line, Gantt and scatter charts, high-level, process, medallion, data flow, DP integration, DP security matrix, Sankey, fishbone, Wardley map, kanban, user journey, deployment, dependency graph, UML class, story map, or database schema diagrams as HTML/SVG/PNG, with .drawio and .excalidraw import support, plus lifecycle phase maps and onboarding guidance.
 license: MIT
 metadata:
   version: "2.6"
@@ -10,7 +10,7 @@ metadata:
 
 Create diagrams as self-contained HTML files with inline SVG and an editorial design system.
 
-Forty-two visual types. Semantic patterns describe behavior independently; type references describe layout. Details load from `references/` only when selected.
+Forty-two visual types. Semantic patterns describe behavior; type references describe layout.
 
 ---
 
@@ -105,9 +105,9 @@ The pattern owns semantic primitives and its tighter budget; the type owns layou
 | Ranked hierarchy or conversion drop-off | **Pyramid / funnel** | [type-pyramid.md](references/type-pyramid.md) |
 | Quantitative comparison across categories | **Bar chart** | [type-bar.md](references/type-bar.md) |
 | A start total bridged to an end total by signed contributions (budget bridge, headcount deltas) | **Waterfall** | [type-waterfall.md](references/type-waterfall.md) |
-| Part-of-whole, or width × height shares (marimekko) | **Treemap** | [type-treemap.md](references/type-treemap.md) |
+| Part-of-whole where the relative sizes are the story | **Treemap** | [type-treemap.md](references/type-treemap.md) |
 | Cross-tabulated data; fill encodes value per cell | **Heatmap** | [type-heatmap.md](references/type-heatmap.md) |
-| Continuous trends over time, change between exactly two states (slopegraph), one distribution per series (ridgeline), rank movement across snapshots (bump), or total composition across periods (streamgraph) | **Line chart** | [type-line.md](references/type-line.md) |
+| Continuous trends over time, change between exactly two states (slopegraph), one distribution per series (ridgeline), or rank movement across several snapshots (bump) | **Line chart** | [type-line.md](references/type-line.md) |
 | Tasks and phases on a timeline | **Gantt** | [type-gantt.md](references/type-gantt.md) |
 | Correlation or distribution of two variables; bubble (three variables) and beeswarm (one variable, dot per item) variants | **Scatter plot** | [type-scatter.md](references/type-scatter.md) |
 | End-to-end data stack on a container cluster | **High-Level** | [type-high-level.md](references/type-high-level.md) |
@@ -275,9 +275,9 @@ These six rules are **non-negotiable**. Run the pre-output checklist (§9) to ve
 
 1. **Rounded right-angle (orthogonal) connectors are mandatory.** Never use diagonal `<line>` or straight slanted paths between nodes that don't share an x or y axis. Every bend must be a quarter-arc with `r=8` (or `r=6` minimum for tight layouts). See `references/type-architecture.md` for the elbow-path formula. Reserve plain straight `<line>` only for connections whose endpoints share the same x or y coordinate. Diagonal connectors are an automatic fail.
 
-2. **Label-to-connector margin: 6–10px gap, always.** Center the label above the line (beside vertical segments), with **≥6px** between its opaque mask and the connector stroke; use 8–10px for larger labels. Never let the mask touch or overlap the stroke: the entire connector must remain traceable.
+2. **Label-to-connector margin: 6–10px gap, always.** A label must never sit *on* its arrow — the connector must remain visible. Place the label centered above (or beside, for vertical segments) the line with a **minimum 6px gap** between the bottom of the label's mask rect and the connector stroke. The opaque mask rect prevents the arrow from bleeding through, but the *visible* gap between mask edge and line preserves the reader's ability to trace the connection. If the label is large enough that 6px feels cramped, push it to 8–10px. Never let the mask rect touch or overlap the stroke.
 
-3. **No overlapping connectors.** Never share a stroke segment. At a single-point crossing, use the **bridge / hop** primitive (`references/type-architecture.md` § Crossing arrows). Offset parallel routes by ≥12px so each stays traceable. If space is insufficient, move nodes or split into overview + detail.
+3. **No overlapping connectors.** Two connectors must never share the same stroke path, run parallel on top of each other, or be drawn on top of each other for any segment. When two orthogonal arrows must cross at a single point, apply the **bridge / hop** primitive (see `references/type-architecture.md` § Crossing arrows). When two arrows naturally want to overlap, offset their routing by ≥12px so each line is independently traceable. If you find yourself stacking connectors, redesign the layout — it means two nodes are too close, or the diagram is over budget (split into overview + detail).
 
 4. **Shared edge → fan the attach points.** When two or more connectors enter or exit the *same edge* of a box, each must have its own distinct attach point along that edge — **no two connectors may share a single point on a box**. Spread the attach points evenly along the edge with **≥12px** between adjacent points (8px minimum for very small boxes). Routing rules:
    - For N connectors on an edge of length L, attach point `k` (1..N) sits at offset `L * k / (N + 1)` from the edge's leading corner.
@@ -293,7 +293,7 @@ These six rules are **non-negotiable**. Run the pre-output checklist (§9) to ve
 
    When in doubt, reroute. The exception exists for the narrow case where rerouting is geometrically impossible, not as a shortcut to avoid layout work.
 
-6. **A label mask must not overlap a node drawn after it.** The later fill clips its text. Place labels on open connector segments; on a node's right, the mask must start beyond `x + width`. A mask fully inside a node is a valid badge chip; overlap with a zone painted first is also valid. From a repository checkout, verify with `python3 <repo-root>/scripts/verify-geometry.py <file>`.
+6. **A label mask must not overlap a node drawn after it.** Put labels on open connector segments; right of a node, start the mask beyond `x + width`. Masks fully inside nodes are badges; overlap with zones painted first is valid. Verify with `python3 <repo-root>/scripts/verify-geometry.py <file>`.
 
 ### Node box — full pattern
 

@@ -103,7 +103,7 @@ Every visual type ships in three static variants: minimal light, minimal dark, a
 <tr>
   <td align="center" width="33%"><a href="docs/screenshots/waterfall.png"><img src="docs/screenshots/thumbs/waterfall.webp" alt="Waterfall"></a><br><b>Waterfall</b><br><sub>Running total + signed bridges</sub></td>
   <td align="center" width="33%"><a href="docs/screenshots/architecture-delta.png"><img src="docs/screenshots/thumbs/architecture-delta.webp" alt="Architecture delta"></a><br><b>Architecture delta</b><br><sub>Before · Changes · After topology</sub></td>
-  <td align="center" width="33%"><a href="docs/screenshots/heatmap.png"><img src="docs/screenshots/thumbs/heatmap.webp" alt="Heatmap"></a><br><b>Heatmap</b><br><sub>Cross-tabulated values + shared ramp</sub></td>
+  <td align="center" width="33%"></td>
 </tr>
 </table>
 
@@ -439,7 +439,6 @@ diagram-design/
 │       │   ├── type-layers.md
 │       │   ├── type-venn.md
 │       │   ├── type-pyramid.md
-│       │   ├── type-heatmap.md
 │       │   ├── type-sankey.md
 │       │   ├── type-fishbone.md
 │       │   ├── type-wardley.md
