@@ -249,9 +249,14 @@ class ContractTests(unittest.TestCase):
         for tag in ('defs', 'symbol', 'mask', 'pattern', 'template', 'title'):
             with self.subTest(tag=tag):
                 source = GOOD.replace(original, f'<{tag}>{original}</{tag}>', 1)
-                # HTMLParser treats title as raw text; its apparent component
-                # is absent from the graph and the existing edge is dangling.
-                self.rejects(source, 'dangling relationship endpoint' if tag == 'title' else 'nonrendering containers')
+                # HTMLParser versions expose title contents as nodes or text.
+                if tag == 'title':
+                    self.assertRegex(
+                        '\n'.join(checker.check_source(SYNTHETIC_PATH, source)),
+                        r'nonrendering containers|dangling relationship endpoint',
+                    )
+                else:
+                    self.rejects(source, 'nonrendering containers')
 
     def test_animation_use_and_nested_svg(self):
         for extra in ('<animate attributeName="x"/>', '<animateTransform/>', '<use href="#client"/>', '<svg/>'):
